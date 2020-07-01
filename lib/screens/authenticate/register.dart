@@ -18,6 +18,7 @@ class _RegisterState extends State<Register> {
 
   String email = '';
   String password  = '';
+  String error = '';
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +46,7 @@ class _RegisterState extends State<Register> {
             children: <Widget>[
               SizedBox(height: 20.0),
               TextFormField(
+                validator: (val) => val.isEmpty ? 'Enter an email' : null,
                 onChanged: (val) {
                   setState(() => email = val );
                   print(email);
@@ -52,6 +54,7 @@ class _RegisterState extends State<Register> {
               ),
               SizedBox(height: 20.0),
               TextFormField(
+                validator: (val) => val.length < 6 ? 'Enter a password 6+ chars long' : null,
                 obscureText: true,
                 onChanged: (val) {
                   setState(() => password= val );
@@ -63,8 +66,15 @@ class _RegisterState extends State<Register> {
               RaisedButton(
                 onPressed: () async{
                   if(_formKey.currentState.validate()){
-                    print(email);
-                    print(password);
+                    dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                    
+                    if(result == null){
+                      setState(() {
+                        error = 'please supply a valid email';
+                      });
+                    } else{
+
+                    }
                   }
                   else{
                     
@@ -76,6 +86,11 @@ class _RegisterState extends State<Register> {
                   style: TextStyle(
                     color: Colors.white,
                   )),
+              ),
+              SizedBox(height:12.0),
+              Text(
+                error,
+                style: TextStyle(color: Colors.red, fontSize: 14.0),
               )
             ],
           ),
